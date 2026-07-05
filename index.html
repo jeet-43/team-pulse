@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeamPulse</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- top nav -->
+  <nav class="tp-nav">
+    <div class="tp-nav-inner">
+      <button id="backBtn" class="tp-icon-btn tp-hidden" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="tp-logo" id="logoHome">
+        <img src="logo.png" alt="TeamPulse" class="tp-logo-img" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span class=\'tp-logo-fallback\'></span>');" /> TeamPulse
+      </div>
+      <span class="tp-tagline">Collaboration health monitor for student teams</span>
+      <div class="tp-nav-spacer"></div>
+    </div>
+  </nav>
+
+  <main class="tp-main">
+
+    <!-- dashboard screen -->
+    <section id="view-dashboard" class="tp-view">
+      <div class="tp-container">
+        <div class="tp-dash-header">
+          <div>
+            <h1 class="tp-h1">Your projects</h1>
+            <p class="tp-sub">No more "I thought you were doing that." Everyone can see the board.</p>
+          </div>
+          <button id="newProjectBtn" class="tp-btn tp-btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            New project
+          </button>
+        </div>
+
+        <div id="projectGrid" class="tp-project-grid"><!-- cards go here --></div>
+
+        <!-- empty state -->
+        <div id="dashEmptyState" class="tp-empty tp-hidden">
+          <img src="logo.png" alt="" class="tp-empty-icon" />
+          <h3>No projects yet</h3>
+          <p>Start one and add your teammates. TeamPulse tracks the rest automatically.</p>
+          <button class="tp-btn tp-btn-primary" onclick="document.getElementById('newProjectBtn').click()">Create your first project</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- project screen -->
+    <section id="view-project" class="tp-view tp-hidden">
+      <div class="tp-container">
+
+        <!-- project header -->
+        <div class="tp-project-header">
+          <div>
+            <h1 id="projectName" class="tp-h1"></h1>
+            <p id="projectDesc" class="tp-sub"></p>
+          </div>
+          <div class="tp-badge tp-badge-deadline">
+            <span class="tp-badge-label">Deadline</span>
+            <span id="deadlineCountdown" class="tp-badge-value"></span>
+          </div>
+        </div>
+
+        <!-- insight strip -->
+        <div class="tp-insight-strip">
+          <div id="healthCard" class="tp-insight-card tp-insight-health">
+            <span class="tp-insight-label">Team health</span>
+            <span id="healthValue" class="tp-insight-value">—</span>
+            <span id="healthDetail" class="tp-insight-detail"></span>
+          </div>
+          <div id="riskCard" class="tp-insight-card tp-insight-risk">
+            <span class="tp-insight-label">Project risk</span>
+            <span id="riskValue" class="tp-insight-value">—</span>
+            <span id="riskDetail" class="tp-insight-detail"></span>
+          </div>
+          <div id="fairnessCard" class="tp-insight-card">
+            <span class="tp-insight-label">Contribution fairness</span>
+            <span id="fairnessValue" class="tp-insight-value">—</span>
+            <span id="fairnessDetail" class="tp-insight-detail"></span>
+          </div>
+        </div>
+
+        <!-- blocked list -->
+        <div id="blockedSection" class="tp-blocked-section tp-hidden">
+          <h3 class="tp-section-title">⚠ Someone is stuck</h3>
+          <div id="blockedList" class="tp-blocked-list"></div>
+        </div>
+
+        <div class="tp-toolbar">
+          <button id="addTaskBtn" class="tp-btn tp-btn-primary tp-btn-sm">+ Task</button>
+          <button id="addMemberBtn" class="tp-btn tp-btn-secondary tp-btn-sm">+ Member</button>
+        </div>
+
+        <div class="tp-project-layout">
+
+          <!-- task board -->
+          <div class="tp-board">
+            <div class="tp-column" data-status="todo">
+              <div class="tp-column-head"><span class="tp-dot tp-dot-todo"></span>To do <span id="count-todo" class="tp-count">0</span></div>
+              <div id="col-todo" class="tp-column-body"></div>
+            </div>
+            <div class="tp-column" data-status="in-progress">
+              <div class="tp-column-head"><span class="tp-dot tp-dot-progress"></span>In progress <span id="count-in-progress" class="tp-count">0</span></div>
+              <div id="col-in-progress" class="tp-column-body"></div>
+            </div>
+            <div class="tp-column" data-status="done">
+              <div class="tp-column-head"><span class="tp-dot tp-dot-done"></span>Done <span id="count-done" class="tp-count">0</span></div>
+              <div id="col-done" class="tp-column-body"></div>
+            </div>
+          </div>
+
+          <!-- sidebar tabs -->
+          <aside class="tp-sidebar">
+            <div class="tp-tabs" role="tablist">
+              <button class="tp-tab is-active" data-tab="contribution" role="tab" aria-selected="true">Contribution <span id="tabcount-contribution" class="tp-count">0</span></button>
+              <button class="tp-tab" data-tab="workload" role="tab" aria-selected="false">Workload <span id="tabcount-workload" class="tp-count">0</span></button>
+              <button class="tp-tab" data-tab="activity" role="tab" aria-selected="false">Activity <span id="tabcount-activity" class="tp-count">0</span></button>
+            </div>
+
+            <div id="tabpanel-contribution" class="tp-tabpanel">
+              <div id="memberList" class="tp-member-list"></div>
+            </div>
+
+            <div id="tabpanel-workload" class="tp-tabpanel tp-hidden">
+              <div id="workloadList" class="tp-workload-list"></div>
+            </div>
+
+            <div id="tabpanel-activity" class="tp-tabpanel tp-hidden">
+              <label class="tp-threshold-control">
+                <span>Flag inactive after</span>
+                <select id="inactivityThreshold">
+                  <option value="1">1d</option>
+                  <option value="2">2d</option>
+                  <option value="3" selected>3d</option>
+                  <option value="5">5d</option>
+                  <option value="7">7d</option>
+                </select>
+              </label>
+              <div id="activityLog" class="tp-activity-list"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- new project modal -->
+  <div id="modal-project" class="tp-modal-overlay tp-hidden">
+    <div class="tp-modal">
+      <h2 class="tp-modal-title">New project</h2>
+      <form id="projectForm">
+        <label class="tp-field">
+          <span>Project name</span>
+          <input type="text" id="pf-name" required placeholder="e.g. CS 3110 Final Project" />
+        </label>
+        <label class="tp-field">
+          <span>Deadline</span>
+          <input type="date" id="pf-deadline" required />
+        </label>
+        <label class="tp-field">
+          <span>Description</span>
+          <textarea id="pf-desc" rows="2" placeholder="What is this project about?"></textarea>
+        </label>
+        <div class="tp-modal-actions">
+          <button type="button" class="tp-btn tp-btn-ghost" data-close-modal="modal-project">Cancel</button>
+          <button type="submit" class="tp-btn tp-btn-primary">Create project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- add member modal -->
+  <div id="modal-member" class="tp-modal-overlay tp-hidden">
+    <div class="tp-modal">
+      <h2 class="tp-modal-title">Add team member</h2>
+      <form id="memberForm">
+        <label class="tp-field">
+          <span>Name</span>
+          <input type="text" id="mf-name" required placeholder="e.g. Riya Sharma" />
+        </label>
+        <label class="tp-field">
+          <span>Role</span>
+          <input type="text" id="mf-role" placeholder="e.g. Frontend, Research, PM" />
+        </label>
+        <div class="tp-modal-actions">
+          <button type="button" class="tp-btn tp-btn-ghost" data-close-modal="modal-member">Cancel</button>
+          <button type="submit" class="tp-btn tp-btn-primary">Add member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- add/edit task modal -->
+  <div id="modal-task" class="tp-modal-overlay tp-hidden">
+    <div class="tp-modal">
+      <h2 class="tp-modal-title" id="taskModalTitle">New task</h2>
+      <form id="taskForm">
+        <input type="hidden" id="tf-id" />
+        <label class="tp-field">
+          <span>Title</span>
+          <input type="text" id="tf-title" required placeholder="e.g. Design mockup" />
+        </label>
+        <label class="tp-field">
+          <span>Assigned to</span>
+          <select id="tf-assignee" required></select>
+        </label>
+        <div class="tp-field-row">
+          <label class="tp-field">
+            <span>Due date</span>
+            <input type="date" id="tf-due" required />
+          </label>
+          <label class="tp-field">
+            <span>Status</span>
+            <select id="tf-status">
+              <option value="todo">To do</option>
+              <option value="in-progress">In progress</option>
+              <option value="done">Done</option>
+            </select>
+          </label>
+        </div>
+        <div class="tp-modal-actions tp-modal-actions-split">
+          <button type="button" id="deleteTaskBtn" class="tp-btn tp-btn-danger-text tp-hidden">Delete task</button>
+          <div class="tp-modal-actions">
+            <button type="button" class="tp-btn tp-btn-ghost" data-close-modal="modal-task">Cancel</button>
+            <button type="submit" class="tp-btn tp-btn-primary">Save task</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- task detail modal -->
+  <div id="modal-detail" class="tp-modal-overlay tp-hidden">
+    <div class="tp-modal">
+      <div class="tp-detail-head">
+        <h2 id="detailTitle" class="tp-modal-title"></h2>
+        <button class="tp-icon-btn" data-close-modal="modal-detail" aria-label="Close">✕</button>
+      </div>
+      <div id="detailMeta" class="tp-detail-meta"></div>
+
+      <button id="blockerBtn" class="tp-btn tp-btn-blocker">I'm stuck on this</button>
+
+      <div class="tp-modal-actions">
+        <button type="button" id="editFromDetailBtn" class="tp-btn tp-btn-ghost">Edit task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast message -->
+  <div id="toast" class="tp-toast tp-hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
