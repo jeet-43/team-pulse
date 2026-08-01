@@ -89,6 +89,7 @@ index.html      App shell and all views and modals
 app.js          All application logic: state, scoring, rendering
 styles.css      Design system and component styles
 logo.png        TeamPulse logo, the heartbeat mark
+TeamPulse.pdf   Presentation (Details, Ideation, Features) 
 ```
 
 ---
